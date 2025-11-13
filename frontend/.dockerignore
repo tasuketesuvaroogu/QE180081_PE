@@ -1,0 +1,20 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+*.log
+.vscode
+.idea
+coverage
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+README.md
+.DS_Store
+# Note: build directory is needed for Dockerfile.prebuilt
+# Uncomment the line below if using the multi-stage Dockerfile instead:
+# build

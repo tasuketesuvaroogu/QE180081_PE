@@ -1,0 +1,31 @@
+# Dockerfile for pre-built frontend artifacts
+# Build outside Docker with: pnpm install && pnpm run build
+
+FROM node:20-alpine AS base
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+RUN corepack enable
+
+WORKDIR /app
+
+FROM base AS production
+
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm add -g serve
+
+# Copy pre-built files
+COPY ./build ./build
+
+# Copy nginx config and entrypoint (if needed for config injection)
+COPY nginx.conf /app/nginx.conf
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod +x /app/docker-entrypoint.sh
+
+ENV NODE_ENV=production
+ENV PORT=80
+
+EXPOSE 80
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["sh", "-c", "serve -s build -l ${PORT:-80}"]

@@ -1,0 +1,43 @@
+services:
+  frontend:
+    container_name: movie-watchlist-frontend
+    image: ghcr.io/tasuketesuvaroogu/prn-assignment-frontend:latest
+    expose:
+      - "5244"
+    networks:
+      - proxy
+    environment:
+      - NODE_ENV=production
+      - API_URL=
+    restart: unless-stopped
+  backend:
+    container_name: movie-watchlist-backend
+    image: ghcr.io/tasuketesuvaroogu/prn-assignment-backend:latest
+    platform: linux/arm64
+    # Option 1: Use .env file (recommended)
+    env_file:
+      - ./backend/.env
+    # Option 2: Inline environment variables
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:6124
+      # Database
+      - DatabaseSettings__ConnectionString=${MONGO_CONNECTION_STRING}
+      - DatabaseSettings__DatabaseName=MovieWatchlistDb
+      - DatabaseSettings__MoviesCollectionName=Movies
+      - DatabaseSettings__UsersCollectionName=Users
+      # JWT
+      - JwtSettings__Issuer=PRN.MovieWatchlist
+      - JwtSettings__Audience=PRN.MovieWatchlist.Client
+      - JwtSettings__SecretKey=${JWT_SECRET_KEY}
+      - JwtSettings__AccessTokenExpirationMinutes=120
+    expose:
+      - "6124"
+    networks:
+      - proxy
+    restart: unless-stopped      
+
+networks:
+  proxy:
+     name: "nginx-pm"
+     external: true

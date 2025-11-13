@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  frontend:
+    build: .
+    image: my-frontend:test
+    ports:
+      - "8080:80"
+    environment:
+      - VITE_API_URL=http://localhost:5000/api
+    # Uncomment if you want to auto-rebuild on code changes (for dev only)
+    # volumes:
+    #   - ./build:/usr/share/nginx/html
+    #   - ./docker-entrypoint.sh:/docker-entrypoint.sh
+    #   - ./nginx.conf:/etc/nginx/conf.d/default.conf
